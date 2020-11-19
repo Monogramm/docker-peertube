@@ -1,0 +1,110 @@
+version: "2.3"
+
+networks:
+  __app_uppercase_slug___external_network:
+  __app_uppercase_slug___internal_network:
+    internal: true
+
+services:
+  # https://docs.docker.com/docker-hub/builds/automated-testing/
+  sut:
+    build:
+      context: ./test
+      dockerfile: Dockerfile
+    depends_on:
+      __app_slug__-db:
+        condition: service_started
+      __app_slug__:
+        condition: service_started
+      __app_slug__-nginx:
+        condition: service_started
+    networks:
+      - __app_uppercase_slug___internal_network
+    volumes_from:
+      - __app_slug__
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+  __app_slug__:
+    # For development or CI, tag build from local Dockerfile
+    build:
+      context: ./
+      dockerfile: Dockerfile
+      args: 
+        - TAG=${TAG}
+        - VCS_REF=${VCS_REF}
+        - BUILD_DATE=${BUILD_DATE}
+    # For production, download prebuilt image
+    #image: ${IMAGE_NAME}
+    container_name: __app_slug__
+    #restart: always
+    depends_on:
+      __app_slug__-db:
+        condition: service_healthy
+    links:
+      - __app_slug__-db
+    expose:
+      - '9000'
+    #ports:
+    #  - "9000:9000"
+    networks:
+      - __app_uppercase_slug___internal_network
+    volumes:
+      - $__app_uppercase_slug___HOME/html:/var/www/html
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - __app_uppercase_slug___DB_TYPE=pgsql
+      - __app_uppercase_slug___DB_HOST=$__app_slug__-db
+      - __app_uppercase_slug___DB_NAME=$__app_uppercase_slug___DB_NAME
+      - __app_uppercase_slug___DB_USER=$__app_uppercase_slug___DB_USER
+      - __app_uppercase_slug___DB_PASSWORD=$__app_uppercase_slug___DB_PASSWD
+
+  __app_slug__-db:
+    image: postgres:latest
+    container_name: __app_slug__-db
+    restart: always
+    #ports:
+    #  - "5432:5432"
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "${__app_uppercase_slug___DB_USER}", "-d", "${__app_uppercase_slug___DB_NAME}"]
+    networks:
+      - __app_uppercase_slug___internal_network
+    volumes:
+      - $__app_uppercase_slug___HOME/db:/var/lib/postgresql/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+    environment:
+      - POSTGRES_DB=$__app_uppercase_slug___DB_NAME
+      - POSTGRES_USER=$__app_uppercase_slug___DB_USER
+      - POSTGRES_PASSWORD=$__app_uppercase_slug___DB_PASSWD
+
+  __app_slug__-nginx:
+    image: nginx:latest
+    container_name: __app_slug__-nginx
+    restart: always
+    ports:
+      - "80:80"
+      # If you need SSL connection
+      # - "443:443"
+    networks:
+      - __app_uppercase_slug___internal_network
+      - __app_uppercase_slug___external_network
+    depends_on:
+      __app_slug__:
+        condition: service_started
+    links:
+      - __app_slug__
+    volumes:
+      - $__app_uppercase_slug___HOME/html:/var/www/html
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+      # TODO Provide a custom nginx conf
+      #- ./nginx.conf:/etc/nginx/nginx.conf:ro
+      # If you need SSL connection, you can provide your own certificates
+      # - ./certs:/etc/letsencrypt
+      # - ./certs-data:/data/letsencrypt
+    environment:
+      - NGINX_HOST=localhost # set your local domain or your live domain
+      # - NGINX_CGI=__app_slug__:9000 # same as __app_slug__ container name
