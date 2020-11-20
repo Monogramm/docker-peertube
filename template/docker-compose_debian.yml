@@ -1,8 +1,8 @@
 version: "2.3"
 
 networks:
-  __app_slug___external_network:
-  __app_slug___internal_network:
+  peertube_external_network:
+  peertube_internal_network:
     internal: true
 
 services:
@@ -12,19 +12,19 @@ services:
       context: ./test
       dockerfile: Dockerfile
     depends_on:
-      __app_slug__-db:
+      peertube-db:
         condition: service_healthy
-      __app_slug__:
+      peertube:
         condition: service_started
     networks:
-      - __app_slug___internal_network
+      - peertube_internal_network
     volumes_from:
-      - __app_slug__
+      - peertube
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
 
-  __app_slug__:
+  peertube:
     # For development or CI, tag build from local Dockerfile
     build:
       context: ./
@@ -35,52 +35,132 @@ services:
         - BUILD_DATE=${BUILD_DATE}
     # For production, download prebuilt image
     #image: ${IMAGE_NAME}
-    container_name: __app_slug__
+    # Parent image
+    #image: chocobozzz/peertube:production-buster
+    container_name: peertube
+    hostname: peertube
+    domainname: ${DOMAIN}
+    # [TODO] Enable auto-restart when production-ready
     #restart: always
-    depends_on:
-      __app_slug__-db:
-        condition: service_healthy
-    links:
-      - __app_slug__-db
-    expose:
-      - '80'
     ports:
-      - "80:80"
+      - "9000:9000"
+    depends_on:
+      peertube_db:
+        condition: service_healthy
+      peertube_redis:
+        condition: service_started
     networks:
-      - __app_slug___internal_network
-      - __app_slug___external_network
+      - peertube_external_network
+      - peertube_internal_network
+    environment:
+      # Instance configuration
+      - PEERTUBE_INSTANCE_NAME=PeerTube ${COMPANY_NAME}
+      # Server configuration
+      - PEERTUBE_WEBSERVER_HOSTNAME=peertube.${DOMAIN}
+      - PEERTUBE_TRUST_PROXY=["127.0.0.1", "loopback", "172.20.0.0/16"]
+      # Database / Postgres service configuration
+      - PEERTUBE_DB_HOSTNAME=peertube_db
+      - PEERTUBE_DB_PORT=5432
+      - PEERTUBE_DB_NAME=peertube
+      - PEERTUBE_DB_USERNAME=${PEERTUBE_DB_USER}
+      - PEERTUBE_DB_PASSWORD=${PEERTUBE_DB_PASSWORD}
+      # Redis configuration
+      - PEERTUBE_REDIS_HOSTNAME=peertube_redis
+      - PEERTUBE_REDIS_PORT=6379
+      - PEERTUBE_REDIS_AUTH=${PEERTUBE_REDIS_PASSWORD}
+      # E-mail configuration
+      - PEERTUBE_SMTP_HOSTNAME=peertube_mailer
+      - PEERTUBE_SMTP_PORT=1025
+      - PEERTUBE_SMTP_USER=${PEERTUBE_SMTP_USER}
+      - PEERTUBE_SMTP_PASSWORD=${PEERTUBE_SMTP_PASSWORD}
+      - PEERTUBE_SMTP_TLS=false
+      - PEERTUBE_SMTP_DISABLE_STARTTLS=false
+      - PEERTUBE_SMTP_FROM=noreply@${DOMAIN}
+      - PEERTUBE_ADMIN_EMAIL=admin@${DOMAIN}
+      - PT_INITIAL_ROOT_PASSWORD=${PEERTUBE_ADMIN_PASSWORD}
+      # Other config
+      - PEERTUBE_SIGNUP_ENABLED=false
+      - PEERTUBE_TRANSCODING_ENABLED=true
+      - PEERTUBE_CONTACT_FORM_ENABLED=true
+      # XXX LDAP configuration
+      #- PEERTUBE_LDAP_URL=ldaps://peertube_ldap:636
+      #- PEERTUBE_LDAP_BIND_DN=${PEERTUBE_BIND_DN}
+      #- PEERTUBE_LDAP_BIND_CREDENTIALS=${PEERTUBE_BIND_PASSWORD}
+      #- PEERTUBE_LDAP_INSECURE_TLS=false
+      #- PEERTUBE_LDAP_SEARCH_BASE=ou=People,${LDAP_BASE}
+      #- PEERTUBE_LDAP_SEARCH_FILTER=(|(mail={{username}})(uid={{username}}))
+      #- PEERTUBE_LDAP_USERNAME_PROPERTY=uid
+      #- PEERTUBE_LDAP_MAIL_PROPERTY=mail
     volumes:
-      - $__app_uppercase_slug___HOME/html:/var/www/html
+      - ${PEERTUBE_HOME}/data:/data
+      - ${PEERTUBE_HOME}/config:/config
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
-    environment:
-      - __app_uppercase_slug___DB_TYPE=mysql
-      - __app_uppercase_slug___DB_HOST=$__app_slug__-db
-      - __app_uppercase_slug___DB_NAME=$__app_uppercase_slug___DB_NAME
-      - __app_uppercase_slug___DB_USER=$__app_uppercase_slug___DB_USER
-      - __app_uppercase_slug___DB_PASSWORD=$__app_uppercase_slug___DB_PASSWD
 
-  __app_slug__-db:
-    image: mariadb:latest
-    container_name: __app_slug__-db
+  peertube_db:
+    image: postgres:10-alpine
+    container_name: peertube_db
     restart: always
-    command: --character_set_client=utf8 --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci --character-set-client-handshake=FALSE
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost", "--password=${$__app_uppercase_slug___DB_ROOT_PASSWD}"]
-      timeout: 10s
+      test: ["CMD", "pg_isready", "-U", "${PEERTUBE_DB_USER}", "-d", "peertube"]
+      interval: 60s
       retries: 5
+      #start-period: 10s
     expose:
-      - '3306'
-    #ports:
-    #  - "3306:3306"
+      - '5432'
     networks:
-      - __app_slug___internal_network
+      - peertube_internal_network
+    environment:
+      - POSTGRES_DB=peertube
+      - POSTGRES_USER=${PEERTUBE_DB_USER}
+      - POSTGRES_PASSWORD=${PEERTUBE_DB_PASSWORD}
     volumes:
-      - $__app_uppercase_slug___HOME/db:/var/lib/mysql
+      - ${PEERTUBE_HOME}/db/data/:/var/lib/postgresql/data
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
+
+  peertube_redis:
+    image: redis:4-alpine
+    container_name: peertube_redis
+    restart: always
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+    command: redis-server --appendonly yes --appendfsync always --save 900 1 --save 300 10 --save 60 1000
+    expose:
+      - '6379'
+    networks:
+      - peertube_internal_network
     environment:
-      - MYSQL_ROOT_PASSWORD=$__app_uppercase_slug___DB_ROOT_PASSWD
-      - MYSQL_DATABASE=$__app_uppercase_slug___DB_NAME
-      - MYSQL_USER=$__app_uppercase_slug___DB_USER
-      - MYSQL_PASSWORD=$__app_uppercase_slug___DB_PASSWD
+      - REDIS_PASSWORD=${PEERTUBE_REDIS_PASSWORD}
+      #- ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - ${PEERTUBE_HOME}/redis:/data
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+  # Simple mail service for testing
+  peertube_mailer:
+    image: sj26/mailcatcher:latest
+    hostname: peertube_mailer
+    container_name: peertube_mailer
+    restart: always
+    expose:
+      - 1025
+    ports:
+      - 1080:1080
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro
+
+  # Simple LDAP service for testing
+  peertube_ldap:
+    image: rroemhild/test-openldap:latest
+    hostname: peertube_ldap
+    container_name: peertube_ldap
+    restart: always
+    expose:
+      - 389
+      - 636
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/timezone:/etc/timezone:ro

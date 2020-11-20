@@ -1,6 +1,6 @@
 #!/bin/sh
 ##
-##    Docker image for __app_name__.
+##    Docker image for PeerTube.
 ##    Copyright (C) 2020  Monogramm
 ##
 set -e
@@ -99,9 +99,9 @@ wait_for_services() {
 init() {
     # Check version
     if [ ! -f "./.docker-version" ]; then
-        log "[TODO] __app_name__ init to $(cat /app/src/.docker-version)..."
+        log "[TODO] PeerTube init to $(cat /app/src/.docker-version)..."
     elif ! cmp --silent "./.docker-version" "/app/src/.docker-version"; then
-        log "[TODO] __app_name__ update from $(cat ./.docker-version) to $(cat /app/src/.docker-version)..."
+        log "[TODO] PeerTube update from $(cat ./.docker-version) to $(cat /app/src/.docker-version)..."
     fi
 
     cp -p "/app/src/.docker-version" "./.docker-version"
@@ -116,7 +116,7 @@ start() {
 
 # display help
 print_help() {
-    echo "Monogramm Docker entrypoint for __app_name__.
+    echo "Monogramm Docker entrypoint for PeerTube.
 
 Usage:
 docker exec  <option> [arguments]

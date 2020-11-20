@@ -1,4 +1,4 @@
-FROM chocobozzz/peertube:%%VERSION%%-%%VARIANT%%
+FROM chocobozzz/peertube:production--buster
 
 # Add requirements and install application
 RUN set -ex; \
@@ -12,7 +12,7 @@ RUN set -ex; \
 # Arguments to label built container
 ARG VCS_REF
 ARG BUILD_DATE
-ARG VERSION=%%VERSION%%
+ARG VERSION=production
 
 # Keep track of image version
 RUN set -ex; \
