@@ -1,7 +1,5 @@
 FROM chocobozzz/peertube:develop-buster
 
-USER peertube
-
 # Add plugins
 RUN set -ex; \
     yarn add peertube-plugin-auth-ldap; \

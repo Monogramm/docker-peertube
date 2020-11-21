@@ -1,7 +1,5 @@
 FROM chocobozzz/peertube:%%VERSION%%%%VARIANT%%
 
-USER peertube
-
 # Add plugins
 RUN set -ex; \
     yarn add peertube-plugin-auth-ldap; \
