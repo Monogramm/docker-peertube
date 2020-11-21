@@ -2,9 +2,9 @@
 [![Docs](https://img.shields.io/badge/Docs-Github%20Pages-blue)](https://monogramm.github.io/PeerTube/)
 [![Build Status](https://travis-ci.org/Monogramm/docker-peertube.svg)](https://travis-ci.org/Monogramm/docker-peertube)
 [![Docker Automated buid](https://img.shields.io/docker/cloud/build/Monogramm/docker-peertube.svg)](https://hub.docker.com/r/Monogramm/docker-peertube/)
-[![Docker Pulls](https://img.shields.io/docker/pulls/Monogramm/docker-peertube.svg)](https://hub.docker.com/r/Monogramm/docker-peertube/)
-[![Docker Version](https://images.microbadger.com/badges/version/Monogramm/docker-peertube.svg)](https://microbadger.com/images/Monogramm/docker-peertube)
-[![Docker Size](https://images.microbadger.com/badges/image/Monogramm/docker-peertube.svg)](https://microbadger.com/images/Monogramm/docker-peertube)
+[![Docker Pulls](https://img.shields.io/docker/pulls/Monogramm/docker-peertube.svg)](https://hub.docker.com/r/monogramm/docker-peertube/)
+[![Docker Version](https://images.microbadger.com/badges/version/Monogramm/docker-peertube.svg)](https://microbadger.com/images/monogramm/docker-peertube)
+[![Docker Size](https://images.microbadger.com/badges/image/Monogramm/docker-peertube.svg)](https://microbadger.com/images/monogramm/docker-peertube)
 [![GitHub stars](https://img.shields.io/github/stars/Monogramm/docker-peertube?style=social)](https://github.com/Monogramm/docker-peertube)
 
 # **PeerTube** Docker image
@@ -27,7 +27,7 @@ ActivityPub-federated video streaming platform using P2P directly in your web br
 
 ## Supported tags
 
-[Dockerhub Monogramm/docker-peertube](https://hub.docker.com/r/Monogramm/docker-peertube/)
+[Dockerhub Monogramm/docker-peertube](https://hub.docker.com/r/monogramm/docker-peertube/)
 
 -   `production` `latest`
 -   `develop`
