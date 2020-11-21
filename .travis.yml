@@ -16,7 +16,7 @@ before_script:
   - export TAG=travis
   - export VCS_REF=`git rev-parse --short HEAD`
   - export BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"`
-  - export IMAGE_NAME=docker-PeerTube
+  - export IMAGE_NAME=docker-peertube
 
 script:
   - cd "$dir"
@@ -27,20 +27,16 @@ script:
   - travis_retry docker-compose -f docker-compose.test.yml up -d
   - docker-compose -f docker-compose.test.yml logs -f "sut"
   - docker-compose -f docker-compose.test.yml ps
-  - docker-compose -f docker-compose.test.yml logs "PeerTube-db"
-  - docker-compose -f docker-compose.test.yml ps "PeerTube-db" | grep "Up"
-  - docker-compose -f docker-compose.test.yml logs "PeerTube"
-  - docker-compose -f docker-compose.test.yml ps "PeerTube" | grep "Up"
+  - docker-compose -f docker-compose.test.yml logs "peertube"
+  - docker-compose -f docker-compose.test.yml ps "peertube" | grep "Up"
   - docker-compose -f docker-compose.test.yml ps "sut" | grep "Exit 0"
   # Test containers can be dropped and restarted
   - docker-compose -f docker-compose.test.yml down
   - travis_retry docker-compose -f docker-compose.test.yml up -d
-  - docker-compose -f docker-compose.test.yml logs "sut"
+  - docker-compose -f docker-compose.test.yml logs -f "sut"
   - docker-compose -f docker-compose.test.yml ps
-  - docker-compose -f docker-compose.test.yml logs "PeerTube-db"
-  - docker-compose -f docker-compose.test.yml ps "PeerTube-db" | grep "Up"
-  - docker-compose -f docker-compose.test.yml logs "PeerTube"
-  - docker-compose -f docker-compose.test.yml ps "PeerTube" | grep "Up"
+  - docker-compose -f docker-compose.test.yml logs "peertube"
+  - docker-compose -f docker-compose.test.yml ps "peertube" | grep "Up"
   - docker-compose -f docker-compose.test.yml ps "sut" | grep "Exit 0"
 
 notifications:
