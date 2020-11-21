@@ -1,11 +1,13 @@
 FROM chocobozzz/peertube:develop-buster
 
+USER peertube
+
 # Add plugins
 RUN set -ex; \
-    npm i peertube-plugin-auth-ldap; \
-    npm i peertube-plugin-matomo; \
-    npm i peertube-plugin-webapp-manifest; \
-    npm i peertube-theme-dark
+    yarn add peertube-plugin-auth-ldap; \
+    yarn add peertube-plugin-matomo; \
+    yarn add peertube-plugin-webapp-manifest; \
+    yarn add peertube-theme-dark
 
 COPY ./custom-environment-variables.yaml /app/support/docker/production/config/custom-environment-variables.yaml
 
