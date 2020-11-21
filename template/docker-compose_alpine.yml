@@ -47,6 +47,10 @@ services:
         condition: service_healthy
       peertube_redis:
         condition: service_started
+      peertube_mailer:
+        condition: service_started
+      peertube_ldap:
+        condition: service_started
     networks:
       - peertube_external_network
       - peertube_internal_network
@@ -80,15 +84,15 @@ services:
       - PEERTUBE_SIGNUP_ENABLED=false
       - PEERTUBE_TRANSCODING_ENABLED=true
       - PEERTUBE_CONTACT_FORM_ENABLED=true
-      # XXX LDAP configuration
-      #- PEERTUBE_LDAP_URL=ldaps://peertube_ldap:636
-      #- PEERTUBE_LDAP_BIND_DN=${PEERTUBE_BIND_DN}
-      #- PEERTUBE_LDAP_BIND_CREDENTIALS=${PEERTUBE_BIND_PASSWORD}
-      #- PEERTUBE_LDAP_INSECURE_TLS=false
-      #- PEERTUBE_LDAP_SEARCH_BASE=ou=People,${LDAP_BASE}
-      #- PEERTUBE_LDAP_SEARCH_FILTER=(|(mail={{username}})(uid={{username}}))
-      #- PEERTUBE_LDAP_USERNAME_PROPERTY=uid
-      #- PEERTUBE_LDAP_MAIL_PROPERTY=mail
+      # LDAP configuration
+      - PEERTUBE_LDAP_URL=ldaps://peertube_ldap:636
+      - PEERTUBE_LDAP_BIND_DN=${PEERTUBE_BIND_DN}
+      - PEERTUBE_LDAP_BIND_CREDENTIALS=${PEERTUBE_BIND_PASSWORD}
+      - PEERTUBE_LDAP_INSECURE_TLS=false
+      - PEERTUBE_LDAP_SEARCH_BASE=ou=People,${LDAP_BASE}
+      - PEERTUBE_LDAP_SEARCH_FILTER=(|(mail={{username}})(uid={{username}}))
+      - PEERTUBE_LDAP_USERNAME_PROPERTY=uid
+      - PEERTUBE_LDAP_MAIL_PROPERTY=mail
     volumes:
       - ${PEERTUBE_HOME}/data:/data
       - ${PEERTUBE_HOME}/config:/config

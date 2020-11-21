@@ -1,13 +1,13 @@
 FROM chocobozzz/peertube:develop-buster
 
-# Add requirements and install application
+# Add plugins
 RUN set -ex; \
-    echo '[TODO] ADD INSTALL OPERATIONS'
+    npm i peertube-plugin-auth-ldap; \
+    npm i peertube-plugin-matomo; \
+    npm i peertube-plugin-webapp-manifest; \
+    npm i peertube-theme-dark
 
-#COPY ./entrypoint.sh /
-
-#ENTRYPOINT ["/entrypoint.sh"]
-#CMD ["--help"]
+COPY ./custom-environment-variables.yaml /app/support/docker/production/config/custom-environment-variables.yaml
 
 # Arguments to label built container
 ARG VCS_REF
