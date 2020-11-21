@@ -1,4 +1,4 @@
-FROM chocobozzz/peertube:%%VERSION%%-%%VARIANT%%
+FROM chocobozzz/peertube:%%VERSION%%%%VARIANT%%
 
 # Add requirements and install application
 RUN set -ex; \

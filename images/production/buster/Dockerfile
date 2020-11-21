@@ -1,4 +1,4 @@
-FROM chocobozzz/peertube:production--buster
+FROM chocobozzz/peertube:production-buster
 
 # Add requirements and install application
 RUN set -ex; \
