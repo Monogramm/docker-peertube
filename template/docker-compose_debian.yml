@@ -146,6 +146,8 @@ services:
       - 1025
     ports:
       - 1080:1080
+    networks:
+      - peertube_internal_network
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro
@@ -159,6 +161,8 @@ services:
     expose:
       - 389
       - 636
+    networks:
+      - peertube_internal_network
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - /etc/timezone:/etc/timezone:ro

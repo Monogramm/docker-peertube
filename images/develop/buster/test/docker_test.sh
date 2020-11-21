@@ -5,21 +5,12 @@ set -e
 echo "Waiting to ensure everything is fully ready for the tests..."
 sleep 60
 
-echo "Checking main containers are reachable..."
-if ! ping -c 10 -q PeerTube-db ; then
-    echo 'PeerTube Database container is not responding!'
-    # TODO Display logs to help bug fixing
-    #echo 'Check the following logs for details:'
-    #tail -n 100 logs/*.log
-    exit 2
-fi
-
-if ! ping -c 10 -q PeerTube ; then
+if ! ping -c 10 -q peertube ; then
     echo 'PeerTube Main container is not responding!'
     # TODO Display logs to help bug fixing
     #echo 'Check the following logs for details:'
     #tail -n 100 logs/*.log
-    exit 4
+    exit 2
 fi
 
 # XXX Add your own tests
