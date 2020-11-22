@@ -2,6 +2,7 @@ FROM chocobozzz/peertube:develop-buster
 
 # Add plugins
 RUN set -ex; \
+    yarn install; \
     node dist/scripts/plugin/install.js -n peertube-plugin-auth-ldap; \
     node dist/scripts/plugin/install.js -n peertube-plugin-matomo; \
     node dist/scripts/plugin/install.js -n peertube-theme-dark; \

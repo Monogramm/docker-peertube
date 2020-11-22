@@ -130,3 +130,7 @@ ldap:
   search-filter: "PEERTUBE_LDAP_SEARCH_FILTER"
   mail-property: "PEERTUBE_LDAP_MAIL_PROPERTY"
   username-property: "PEERTUBE_LDAP_USERNAME_PROPERTY"
+
+matomo:
+  url: "PEERTUBE_MATOMO_URL"
+  site-id: "PEERTUBE_MATOMO_SITE_ID"
