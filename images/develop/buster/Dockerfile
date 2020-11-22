@@ -2,10 +2,12 @@ FROM chocobozzz/peertube:develop-buster
 
 # Add plugins
 RUN set -ex; \
-    yarn add peertube-plugin-auth-ldap; \
-    yarn add peertube-plugin-matomo; \
-    yarn add peertube-plugin-webapp-manifest; \
-    yarn add peertube-theme-dark
+    node dist/scripts/plugin/install.js -n peertube-plugin-auth-ldap; \
+    node dist/scripts/plugin/install.js -n peertube-plugin-matomo; \
+    node dist/scripts/plugin/install.js -n peertube-theme-dark; \
+    node dist/scripts/plugin/install.js -n peertube-plugin-social-sharing; \
+    node dist/scripts/plugin/install.js -n peertube-plugin-upload-limits; \
+    node dist/scripts/plugin/install.js -n peertube-plugin-webapp-manifest
 
 COPY ./custom-environment-variables.yaml /app/support/docker/production/config/custom-environment-variables.yaml
 
@@ -16,8 +18,8 @@ ARG VERSION=develop
 
 # Keep track of image version
 RUN set -ex; \
-    mkdir -p '/app/src'; \
-    echo "${VERSION} ${VCS_REF} ${BUILD_DATE}" > '/app/src/.docker-version'
+    mkdir -p '/app/docker'; \
+    echo "${VERSION} ${VCS_REF} ${BUILD_DATE}" > '/app/docker/.docker-version'
 
 # Container labels (http://label-schema.org/)
 # Container annotations (https://github.com/opencontainers/image-spec)

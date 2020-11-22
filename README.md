@@ -1,7 +1,7 @@
 [![License: AGPL v3][uri_license_image]][uri_license]
 [![Docs](https://img.shields.io/badge/Docs-Github%20Pages-blue)](https://monogramm.github.io/PeerTube/)
 [![Build Status](https://travis-ci.org/Monogramm/docker-peertube.svg)](https://travis-ci.org/Monogramm/docker-peertube)
-[![Docker Automated buid](https://img.shields.io/docker/cloud/build/Monogramm/docker-peertube.svg)](https://hub.docker.com/r/Monogramm/docker-peertube/)
+[![Docker Automated buid](https://img.shields.io/docker/cloud/build/Monogramm/docker-peertube.svg)](https://hub.docker.com/r/monogramm/docker-peertube/)
 [![Docker Pulls](https://img.shields.io/docker/pulls/Monogramm/docker-peertube.svg)](https://hub.docker.com/r/monogramm/docker-peertube/)
 [![Docker Version](https://images.microbadger.com/badges/version/Monogramm/docker-peertube.svg)](https://microbadger.com/images/monogramm/docker-peertube)
 [![Docker Size](https://images.microbadger.com/badges/image/Monogramm/docker-peertube.svg)](https://microbadger.com/images/monogramm/docker-peertube)
@@ -11,12 +11,14 @@
 
 Docker image for **PeerTube** with additional plugins.
 
-:construction: **This image is still in development!**
+:construction: **This image is still in beta!**
 
 Additional plugins:
 -   <https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-auth-ldap>
 -   <https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-plugin-matomo>
 -   <https://framagit.org/framasoft/peertube/official-plugins/tree/master/peertube-theme-dark>
+-   <https://github.com/kimsible/peertube-plugin-social-sharing>
+-   <https://github.com/kimsible/peertube-plugin-upload-limits>
 -   <https://github.com/kimsible/peertube-plugin-webapp-manifest>
 
 ## What is **PeerTube**
