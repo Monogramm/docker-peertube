@@ -58,7 +58,7 @@ services:
       # Instance configuration
       - PEERTUBE_INSTANCE_NAME=PeerTube-Example
       # Server configuration
-      - PEERTUBE_WEBSERVER_HOSTNAME=localhost
+      - PEERTUBE_WEBSERVER_HOSTNAME=peertube.${DOMAIN}
       - PEERTUBE_TRUST_PROXY=["127.0.0.1", "loopback", "172.20.0.0/16"]
       # Database / Postgres service configuration
       - PEERTUBE_DB_HOSTNAME=peertube_db
