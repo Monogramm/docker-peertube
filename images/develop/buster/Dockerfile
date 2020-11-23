@@ -1,14 +1,17 @@
 FROM chocobozzz/peertube:develop-buster
 
+USER peertube
+
 # Add plugins
 RUN set -ex; \
-    yarn install; \
-    node dist/scripts/plugin/install.js -n peertube-plugin-auth-ldap; \
-    node dist/scripts/plugin/install.js -n peertube-plugin-matomo; \
-    node dist/scripts/plugin/install.js -n peertube-theme-dark; \
-    node dist/scripts/plugin/install.js -n peertube-plugin-social-sharing; \
-    node dist/scripts/plugin/install.js -n peertube-plugin-upload-limits; \
-    node dist/scripts/plugin/install.js -n peertube-plugin-webapp-manifest
+    export NODE_CONFIG_DIR=/app/support/docker/production/config; \
+    export NODE_ENV=production; \
+    npm run plugin:install -- --npm-name peertube-plugin-auth-ldap; \
+    npm run plugin:install -- --npm-name peertube-plugin-matomo; \
+    npm run plugin:install -- --npm-name peertube-theme-dark; \
+    npm run plugin:install -- --npm-name peertube-plugin-social-sharing; \
+    npm run plugin:install -- --npm-name peertube-plugin-upload-limits; \
+    npm run plugin:install -- --npm-name peertube-plugin-webapp-manifest
 
 COPY ./custom-environment-variables.yaml /app/support/docker/production/config/custom-environment-variables.yaml
 
