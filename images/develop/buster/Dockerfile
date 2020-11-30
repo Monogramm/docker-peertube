@@ -6,12 +6,10 @@ USER peertube
 RUN set -ex; \
     export NODE_CONFIG_DIR=/app/support/docker/production/config; \
     export NODE_ENV=production; \
-    npm run plugin:install -- --npm-name peertube-plugin-auth-ldap; \
-    npm run plugin:install -- --npm-name peertube-plugin-matomo; \
-    npm run plugin:install -- --npm-name peertube-theme-dark; \
-    npm run plugin:install -- --npm-name peertube-plugin-social-sharing; \
-    npm run plugin:install -- --npm-name peertube-plugin-upload-limits; \
-    npm run plugin:install -- --npm-name peertube-plugin-webapp-manifest
+    NOCLIENT=1 yarn install --pure-lockfile; \
+    npm run setup:cli; \
+    alias peertube="cd /app/ && node ./dist/server/tools/peertube.js"; \
+    peertube -v
 
 COPY ./custom-environment-variables.yaml /app/support/docker/production/config/custom-environment-variables.yaml
 
