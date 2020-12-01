@@ -7,6 +7,7 @@ RUN set -ex; \
     export NODE_CONFIG_DIR=/app/support/docker/production/config; \
     export NODE_ENV=production; \
     NOCLIENT=1 yarn install --pure-lockfile; \
+    npm install typescript -g; \
     npm run setup:cli; \
     alias peertube="cd /app/ && node ./dist/server/tools/peertube.js"; \
     peertube -v
